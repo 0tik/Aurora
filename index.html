@@ -1,10 +1,942 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Motion — Georgian-American Production Company</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-light: #f5f2ed;
+            --bg-warm: #eae5dc;
+            --text-dark: #111;
+            --text-light: #f5f2ed;
+            --text-muted: #6b6560;
+            --accent: #c9a96e;
+            --accent-dim: #8a7650;
+            --border: rgba(0,0,0,0.08);
+            --border-light: rgba(255,255,255,0.1);
+            --serif: 'Cormorant Garamond', Georgia, serif;
+            --sans: 'Manrope', system-ui, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--sans);
+            color: var(--text-dark);
+            background: var(--bg-light);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+        a { color: inherit; text-decoration: none; }
+
+        /* ─── HEADER ─── */
+        .site-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(10,10,10,0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-light);
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .site-header.visible { transform: translateY(0); }
+        .header-inner {
+            max-width: 1400px; margin: 0 auto;
+            padding: 0 clamp(1.5rem, 4vw, 3rem);
+            display: flex; align-items: center; justify-content: space-between;
+            height: 64px;
+        }
+        .logo-text {
+            font-family: var(--serif); font-weight: 600; font-size: 1.35rem;
+            color: var(--text-light); letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a {
+            font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+            color: rgba(245,242,237,0.55); font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent); }
+        .menu-toggle {
+            display: none; background: none; border: none; cursor: pointer;
+            color: var(--text-light); padding: 4px;
+        }
+        .menu-toggle svg { width: 26px; height: 26px; }
+
+        /* ─── MOBILE NAV ─── */
+        .mobile-nav {
+            display: none; position: fixed; inset: 0; z-index: 99;
+            background: rgba(10,10,10,0.97); backdrop-filter: blur(20px);
+            flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+        }
+        .mobile-nav.open { display: flex; }
+        .mobile-nav a {
+            font-family: var(--serif); font-size: 1.8rem; color: var(--text-light);
+            opacity: 0.7; transition: opacity 0.3s;
+        }
+        .mobile-nav a:hover { opacity: 1; color: var(--accent); }
+        .mobile-nav-close {
+            position: absolute; top: 1.25rem; right: 1.25rem;
+            background: none; border: none; color: var(--text-light); cursor: pointer;
+        }
+
+        /* ─── REVEAL ANIMATIONS ─── */
+        .reveal {
+            opacity: 0; transform: translateY(50px);
+            transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+            transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.12s; }
+        .reveal-delay-2 { transition-delay: 0.24s; }
+        .reveal-delay-3 { transition-delay: 0.36s; }
+        .reveal-delay-4 { transition-delay: 0.48s; }
+
+        /* ─── HERO ─── */
+        .hero {
+            position: relative; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute; inset: 0;
+        }
+        .hero-bg img { filter: brightness(0.4); }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.3) 50%, rgba(10,10,10,0.6) 100%);
+        }
+        .hero-content {
+            position: relative; z-index: 2;
+            max-width: 1400px; width: 100%;
+            padding: 0 clamp(1.5rem, 4vw, 3rem);
+            display: flex; align-items: center; gap: clamp(3rem, 6vw, 6rem);
+        }
+        .hero-logo-wrap {
+            flex: 1; display: flex; justify-content: center;
+        }
+        .hero-logo {
+            font-family: var(--serif); font-weight: 700;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            color: var(--text-light); text-transform: uppercase;
+            letter-spacing: 0.06em; line-height: 1.1;
+            text-align: right;
+            opacity: 0; transform: translateX(-40px);
+            animation: heroSlideIn 1.2s 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .hero-logo span {
+            display: block; font-weight: 400; font-style: italic;
+            font-size: 0.55em; letter-spacing: 0.15em; opacity: 0.6;
+            margin-top: 0.3em;
+        }
+        @keyframes heroSlideIn {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .hero-desc {
+            flex: 1; max-width: 520px;
+            opacity: 0; transform: translateX(40px);
+            animation: heroSlideIn 1.2s 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .hero-desc p {
+            font-size: clamp(1rem, 1.5vw, 1.15rem);
+            color: rgba(245,242,237,0.85); line-height: 1.75;
+            font-weight: 300;
+        }
+        .hero-desc strong { color: var(--text-light); font-weight: 600; }
+        .hero-scroll {
+            position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+            z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+        }
+        .hero-scroll span {
+            font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+            color: rgba(245,242,237,0.4); font-weight: 500;
+        }
+        .scroll-line {
+            width: 1px; height: 40px; background: rgba(245,242,237,0.2);
+            position: relative; overflow: hidden;
+        }
+        .scroll-line::after {
+            content: ''; position: absolute; top: -100%; left: 0;
+            width: 100%; height: 100%; background: var(--accent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+        @keyframes scrollPulse {
+            0% { top: -100%; } 50% { top: 100%; } 100% { top: 100%; }
+        }
+
+        /* ─── IMAGE STRIP ─── */
+        .image-strip {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+        }
+        .image-strip > div { height: clamp(200px, 25vw, 320px); overflow: hidden; }
+        .image-strip img {
+            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .image-strip > div:hover img { transform: scale(1.06); }
+
+        /* ─── SECTIONS ─── */
+        .section {
+            padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 4vw, 3rem);
+        }
+        .section-inner {
+            max-width: 1400px; margin: 0 auto;
+        }
+        .section-dark {
+            background: var(--bg-dark); color: var(--text-light);
+        }
+        .section-warm { background: var(--bg-warm); }
+
+        .section-heading {
+            font-family: var(--serif); font-weight: 600;
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            letter-spacing: 0.08em; text-transform: uppercase;
+            position: relative; display: inline-block;
+        }
+        .section-heading::after {
+            content: ''; display: block;
+            width: 40px; height: 2px; background: var(--accent);
+            margin-top: 0.75rem;
+        }
+        .section-dark .section-heading::after { background: var(--accent); }
+
+        .person-name {
+            font-family: var(--serif); font-style: italic;
+            font-size: clamp(2rem, 4.5vw, 3.8rem);
+            font-weight: 500; line-height: 1.1;
+            margin-bottom: 0.25rem;
+        }
+
+        .body-text {
+            font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+            line-height: 1.8; font-weight: 300;
+        }
+        .body-text strong { font-weight: 600; }
+        .body-text-bold { font-weight: 600; }
+
+        .two-col {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: clamp(2rem, 4vw, 4rem);
+            align-items: start;
+        }
+
+        .highlight-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg-dark);
+            font-size: 0.75rem; font-weight: 800;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            padding: 0.5rem 1.25rem;
+        }
+
+        /* ─── FILM GRID CARDS ─── */
+        .film-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        .film-card {
+            display: flex; gap: 0.75rem; align-items: flex-start;
+        }
+        .film-card-poster {
+            width: 64px; height: 96px; flex-shrink: 0; overflow: hidden;
+            border-radius: 2px;
+        }
+        .film-card h4 { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.15rem; }
+        .film-card .star { color: var(--accent); font-size: 0.85rem; }
+        .film-card .meta { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* ─── IMAGE COMPOSITIONS ─── */
+        .img-frame {
+            overflow: hidden; position: relative;
+        }
+        .img-frame img {
+            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .img-frame:hover img { transform: scale(1.04); }
+        .img-caption {
+            font-size: 0.75rem; color: var(--text-muted);
+            margin-top: 0.5rem; text-align: center;
+            font-style: italic;
+        }
+        .img-grayscale img { filter: grayscale(1); transition: filter 0.5s, transform 0.7s; }
+        .img-grayscale:hover img { filter: grayscale(0); }
+
+        /* ─── INCENTIVES ─── */
+        .incentives-section {
+            position: relative; overflow: hidden;
+            padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 4vw, 3rem);
+        }
+        .incentives-section .watermark {
+            position: absolute; top: 50%; right: -5%;
+            transform: translateY(-50%);
+            font-family: var(--serif); font-weight: 700;
+            font-size: clamp(10rem, 20vw, 22rem);
+            text-transform: uppercase; opacity: 0.03;
+            line-height: 0.9; pointer-events: none;
+            white-space: nowrap;
+        }
+        .incentive-item {
+            display: flex; align-items: flex-start; gap: clamp(1rem, 2vw, 1.5rem);
+            margin-bottom: clamp(2rem, 4vw, 3.5rem);
+        }
+        .incentive-num {
+            font-size: clamp(3rem, 5vw, 5rem);
+            font-weight: 800; line-height: 1;
+            flex-shrink: 0; min-width: 80px;
+            color: var(--text-dark);
+        }
+        .incentive-text {
+            font-weight: 600; font-size: clamp(0.85rem, 1.1vw, 1rem);
+            line-height: 1.6; padding-top: clamp(0.5rem, 1vw, 1rem);
+            max-width: 420px;
+        }
+
+        /* ─── FOOTER ─── */
+        .site-footer {
+            position: relative; min-height: 70vh;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .footer-bg { position: absolute; inset: 0; }
+        .footer-bg img { filter: brightness(0.35); }
+        .footer-overlay {
+            position: absolute; inset: 0;
+            background: rgba(10,10,10,0.65);
+        }
+        .footer-content {
+            position: relative; z-index: 2;
+            display: flex; align-items: center; gap: clamp(3rem, 6vw, 6rem);
+            padding: 0 clamp(1.5rem, 4vw, 3rem);
+        }
+        .footer-brand {
+            font-family: var(--serif); font-weight: 700;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            color: var(--text-light); text-transform: uppercase;
+            letter-spacing: 0.05em; line-height: 1.1;
+        }
+        .footer-brand span {
+            display: block; font-weight: 400; font-style: italic;
+            font-size: 0.5em; letter-spacing: 0.15em; opacity: 0.5;
+            margin-top: 0.3em;
+        }
+        .footer-contact p {
+            font-size: clamp(1rem, 1.5vw, 1.3rem);
+            color: var(--text-light); font-weight: 600;
+            line-height: 2;
+        }
+        .footer-contact a { transition: color 0.3s; }
+        .footer-contact a:hover { color: var(--accent); }
+        .footer-copy {
+            position: absolute; bottom: 1.5rem; left: 0; right: 0;
+            text-align: center; z-index: 2;
+            font-size: 0.7rem; color: rgba(245,242,237,0.3);
+            letter-spacing: 0.08em;
+        }
+
+        /* ─── EXPERTISE LIST ─── */
+        .expertise-list {
+            list-style: none; margin-top: 1rem;
+        }
+        .expertise-list li {
+            font-size: 0.95rem; line-height: 2;
+            padding-left: 1rem; position: relative;
+            color: rgba(245,242,237,0.75);
+        }
+        .expertise-list li::before {
+            content: '—'; position: absolute; left: 0;
+            color: var(--accent);
+        }
+
+        /* ─── STAGGER IMAGE GRID ─── */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+        .img-tall { height: clamp(280px, 30vw, 420px); }
+        .img-mid { height: clamp(200px, 22vw, 320px); }
+        .img-short { height: clamp(140px, 16vw, 200px); }
+        .img-hero { height: clamp(250px, 28vw, 400px); }
+        .img-fill { height: 100%; }
+
+        /* ─── IMDB LINK ─── */
+        .imdb-link {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-size: 0.85rem; color: var(--accent-dim);
+            border-bottom: 1px solid transparent;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .imdb-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+        /* ─── ELIGIBLE LIST ─── */
+        .eligible-block h4 {
+            font-weight: 700; font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+            margin-bottom: 0.5rem;
+        }
+        .eligible-block ul {
+            list-style: none; margin-bottom: 1.5rem;
+        }
+        .eligible-block li {
+            font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+            line-height: 1.8; padding-left: 1.2rem; position: relative;
+        }
+        .eligible-block li::before {
+            content: '·'; position: absolute; left: 0;
+            font-weight: 800; font-size: 1.2em;
+        }
+
+        /* ─── DIVIDER ─── */
+        .section-divider {
+            border: none; border-top: 1px solid var(--border);
+            max-width: 1400px; margin: 0 auto;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .menu-toggle { display: block; }
+            .hero-content { flex-direction: column; text-align: center; gap: 2rem; padding-top: 4rem; }
+            .hero-logo { text-align: center; }
+            .two-col { grid-template-columns: 1fr; }
+            .film-grid { grid-template-columns: 1fr 1fr; }
+            .footer-content { flex-direction: column; text-align: center; }
+            .image-strip { grid-template-columns: 1fr; }
+            .image-strip > div { height: 220px; }
+            .incentive-item { margin-left: 0 !important; }
+        }
+        @media (max-width: 600px) {
+            .film-grid { grid-template-columns: 1fr; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-$END$
+
+<!-- ═══ HEADER ═══ -->
+<header class="site-header" id="siteHeader">
+    <div class="header-inner">
+        <a href="#hero" class="logo-text">Aurora Motion</a>
+        <nav class="nav-links">
+            <a href="#about">About</a>
+            <a href="#equipment">Equipment</a>
+            <a href="#yan">Yan Fisher</a>
+            <a href="#linda">Linda Kikolashvili</a>
+            <a href="#georgia">Georgia</a>
+            <a href="#footer">Contact</a>
+        </nav>
+        <button class="menu-toggle" onclick="document.querySelector('.mobile-nav').classList.add('open')" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        </button>
+    </div>
+</header>
+
+<!-- ═══ MOBILE NAV ═══ -->
+<div class="mobile-nav">
+    <button class="mobile-nav-close" onclick="this.parentElement.classList.remove('open')" aria-label="Close menu">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <a href="#about" onclick="this.parentElement.classList.remove('open')">About</a>
+    <a href="#equipment" onclick="this.parentElement.classList.remove('open')">Equipment</a>
+    <a href="#yan" onclick="this.parentElement.classList.remove('open')">Yan Fisher</a>
+    <a href="#linda" onclick="this.parentElement.classList.remove('open')">Linda Kikolashvili</a>
+    <a href="#georgia" onclick="this.parentElement.classList.remove('open')">Georgia</a>
+    <a href="#footer" onclick="this.parentElement.classList.remove('open')">Contact</a>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="hero">
+    <div class="hero-bg">
+        <img src="/images/1.jpg" alt="Film production set">
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-logo-wrap">
+            <div class="hero-logo">
+                <img src="logo.svg" alt="">
+            </div>
+        </div>
+        <div class="hero-desc">
+            <p>Aurora Motion is a Georgian-American production company that provides <strong>full production services</strong> — including pre-production, during and post-production — while also developing and producing its own film projects.</p>
+        </div>
+    </div>
+    <div class="hero-scroll">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+    </div>
+</section>
+
+<!-- ═══ IMAGE STRIP ═══ -->
+<div class="image-strip">
+    <div><img src="/images/2.jpg" alt="Film crew on set"></div>
+    <div><img src="/images/3.jpg" alt="Film clapperboard"></div>
+    <div><img src="/images/4.jpg" alt="Cameraman silhouette"></div>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<section class="section" id="about">
+    <div class="section-inner">
+        <div class="reveal">
+            <h2 class="section-heading">About Us</h2>
+        </div>
+        <div class="two-col" style="margin-top: 2.5rem;">
+            <div class="reveal reveal-delay-1">
+                <p class="body-text"><strong>Aurora Motion</strong> is a well-established production company located in <strong>Tbilisi, Georgia</strong>. We cover a wide range of development, production and postproduction services for cinema, TV and commercials, including <strong>consultancy</strong> and <strong>management</strong> for film, television and other AV productions.</p>
+            </div>
+            <div class="reveal reveal-delay-2">
+                <p class="body-text body-text-bold">Recently, Aurora Motion has concentrated its efforts towards developing its own projects (feature films, short films, animation and new media).</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ EQUIPMENT ═══ -->
+<hr class="section-divider">
+<section class="section" id="equipment">
+    <div class="section-inner">
+        <div class="two-col">
+            <div>
+                <div class="reveal">
+                    <h2 class="section-heading">Equipment &amp; Studios</h2>
+                </div>
+                <div class="reveal reveal-delay-1" style="margin-top: 1.5rem;">
+                    <p class="body-text">Aurora Motion is able to work across all media platforms, providing a <strong>multitude of services</strong> to accommodate the <strong>production needs</strong>, from assembling the crew to location scouting, set construction and visual effects.</p>
+                </div>
+                <div class="reveal reveal-delay-2 img-frame" style="margin-top: 2rem;">
+                    <img src="/images/5.jpg" alt="Green screen studio" style="height: clamp(250px, 28vw, 400px);">
+                </div>
+            </div>
+            <div>
+                <div class="reveal img-frame">
+                    <img src="/images/6.jpg" alt="Studio warehouse" style="height: clamp(180px, 20vw, 260px);">
+                </div>
+                <div class="grid-2 reveal reveal-delay-1" style="margin-top: 1rem;">
+                    <div class="img-frame"><img src="/images/2.jpg" alt="Production equipment" style="height: clamp(120px, 14vw, 170px);"></div>
+                    <div class="img-frame"><img src="/images/4.jpg" alt="Camera operator" style="height: clamp(120px, 14vw, 170px);"></div>
+                </div>
+                <div class="reveal reveal-delay-2" style="margin-top: 1.5rem;">
+                    <p class="body-text body-text-bold">Aurora Motion provides high standard services by fully understanding the clients needs and expectations and providing the best solution for location, casting, sets in pre/during/post production.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ YAN FISHER ═══ -->
+<hr class="section-divider">
+<section class="section" id="yan">
+    <div class="section-inner">
+        <div class="two-col" style="align-items: center;">
+            <div class="reveal img-frame img-grayscale">
+                <img src="/images/9.jpg" alt="Yan Fisher" style="max-width: 480px; height: auto;">
+            </div>
+            <div>
+                <div class="reveal">
+                    <div class="person-name">Yan Fisher</div>
+                    <h2 class="section-heading">Who We Are</h2>
+                </div>
+                <div class="reveal reveal-delay-1" style="margin-top: 1.5rem;">
+                    <p class="body-text">Yan Fisher is an <strong>accomplished producer</strong> and <strong>executive</strong> with extensive international co-production experience and a strong track record of developing and delivering <strong>global content</strong>. With a career spanning major studios and <strong>award-winning productions</strong>, he brings deep industry relationships, strong creative judgment, and proven expertise in packaging, financing, and executing <strong>high-level projects.</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ YAN CAREER ═══ -->
+<section class="section" style="padding-top: 0;">
+    <div class="section-inner">
+        <div class="two-col">
+            <div>
+                <div class="reveal">
+                    <p class="body-text body-text-bold" style="margin-bottom: 2rem;">He began his career in news and documentaries before transitioning into feature films, producing titles such as The Perfect Witness and MGM's Pathology.</p>
+                </div>
+                <div class="reveal reveal-delay-1">
+                    <p class="img-caption" style="text-align: left; margin-bottom: 0.5rem;">Short Movie — Achan and Ezra</p>
+                    <div class="img-frame">
+                        <img src="/images/10.jpg" alt="Desert film shoot" style="height: clamp(250px, 30vw, 450px);">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="reveal">
+                    <p class="body-text" style="margin-bottom: 2rem;">In 2010, he co-founded <strong>FISHCORB Films</strong>, based in <strong>Los Angeles</strong> and <strong>Barcelona</strong>, where he remained through the end of 2025. During his tenure, the company produced international projects including Ben-Hur, Seve, and Lies in Plain Sight, while also building a <strong>strong distribution footprint</strong> in the Spanish market.</p>
+                </div>
+                <div class="grid-3 reveal reveal-delay-1" style="margin-top: 1rem;">
+                    <div class="img-frame"><img src="/images/11.jpg" alt="Ben-Hur poster" style="height: clamp(180px, 20vw, 260px);"></div>
+                    <div class="img-frame"><img src="/images/12.jpg" alt="Seve poster" style="height: clamp(180px, 20vw, 260px);"></div>
+                    <div class="img-frame"><img src="/images/13.jpg" alt="Lies in Plain Sight poster" style="height: clamp(180px, 20vw, 260px);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ YAN AWARDS ═══ -->
+<section class="section" style="padding-top: 0;">
+    <div class="section-inner">
+        <div class="reveal">
+            <div class="highlight-badge">7 Wins &amp; 1 Nomination</div>
+        </div>
+        <div class="two-col" style="margin-top: 2.5rem;">
+            <div class="reveal">
+                <div class="grid-2">
+                    <div class="img-frame" style="grid-row: span 2;">
+                        <img src="/images/14.jpg" alt="Papillon poster" style="height: 100%; min-height: clamp(280px, 30vw, 420px);">
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:1rem;">
+                        <div class="img-frame"><img src="/images/15.jpg" alt="Film still" style="height: clamp(130px, 14vw, 200px);"></div>
+                        <div class="img-frame"><img src="/images/3.jpg" alt="Behind the scenes" style="height: clamp(130px, 14vw, 200px);"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="reveal reveal-delay-1">
+                <p class="body-text" style="margin-bottom: 1rem;">Yan's credits include <strong>Papillon</strong> (Toronto International Film Festival), <strong>Let It Snow</strong> (Lionsgate), and <strong>Waiting for Dalí</strong>, which premiered at the Málaga Film Festival.</p>
+                <p class="body-text" style="margin-bottom: 1rem;">His final project with <strong>FISHCORB</strong> was the sci-fi thriller <strong>AMI</strong>, starring Mads Mikkelsen and Diane Kruger, currently in post-production.</p>
+                <p class="body-text">He also made his <strong>directorial debut</strong> with Achan and Ezra, <strong>winner of Best Comedy Short</strong> at the London Independent Film Awards, and produced the documentary Searching for Nika.</p>
+            </div>
+        </div>
+
+        <!-- Film Cards -->
+        <div class="film-grid reveal" style="margin-top: 4rem;">
+            <div class="film-card">
+                <div class="film-card-poster img-frame"><img src="/images/14.jpg" alt="Papillon"></div>
+                <div>
+                    <h4>Papillon</h4>
+                    <p class="star">★ 7.2</p>
+                    <p class="meta">Producer</p>
+                    <p class="meta">2017</p>
+                </div>
+            </div>
+            <div class="film-card">
+                <div class="film-card-poster img-frame"><img src="/images/18.jpg" alt="Achan and Ezra"></div>
+                <div>
+                    <h4>Achan and Ezra</h4>
+                    <p class="star">★ 9.4 <span class="meta" style="margin-left: 0.25rem;">Short</span></p>
+                    <p class="meta">Producer</p>
+                    <p class="meta">2020</p>
+                </div>
+            </div>
+            <div class="film-card">
+                <div class="film-card-poster img-frame"><img src="/images/19.jpg" alt="Pathology"></div>
+                <div>
+                    <h4>Pathology</h4>
+                    <p class="star">★ 5.9</p>
+                    <p class="meta">Producer</p>
+                    <p class="meta">2008</p>
+                </div>
+            </div>
+            <div class="film-card">
+                <div class="film-card-poster img-frame"><img src="/images/20.jpg" alt="Forbidden Tango"></div>
+                <div>
+                    <h4>Forbidden Tango</h4>
+                    <p class="star">★ 5.7</p>
+                    <p class="meta">Producer</p>
+                    <p class="meta">2021</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ YAN CLOSING ═══ -->
+<section class="section" style="padding-top: 0;">
+    <div class="section-inner" style="text-align: center;">
+        <div class="reveal">
+            <p class="body-text" style="max-width: 800px; margin: 0 auto 1.5rem;">Following the completion of AMI, Yan launched Invisible String Films, marking a new chapter <strong>focused on</strong> elevated, <strong>internationally driven storytelling</strong>. As CEO, he oversees <strong>creative strategy</strong>, <strong>financing</strong>, and <strong>production</strong>, ensuring projects are positioned for strong global performance.</p>
+        </div>
+        <div class="reveal reveal-delay-1">
+            <div class="highlight-badge" style="font-size: 0.85rem;">Yan is a member of the Producers Guild of America (PGA) and the European Film Academy</div>
+        </div>
+        <div class="reveal reveal-delay-2" style="margin-top: 1.5rem;">
+            <a href="https://www.imdb.com" target="_blank" rel="noopener noreferrer" class="imdb-link">Yan Fisher on IMDB →</a>
+        </div>
+        <div class="two-col reveal reveal-delay-3" style="margin-top: 3rem; text-align: center;">
+            <div>
+                <p style="font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; margin-bottom: 1rem;">Producers Guild of America</p>
+                <div class="img-frame"><img src="/images/21.jpg" alt="PGA Awards ceremony" style="height: clamp(180px, 20vw, 260px);"></div>
+            </div>
+            <div>
+                <p style="font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600; margin-bottom: 1rem;">European Film Academy</p>
+                <div class="img-frame"><img src="/images/22.jpg" alt="European Film Academy founders meeting 1989" style="height: clamp(180px, 20vw, 260px);"></div>
+                <p class="img-caption">The founder meeting of the European Film Academy 1989 in Berlin.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ LINDA KIKOLASHVILI ═══ -->
+<section class="section section-dark" id="linda">
+    <div class="section-inner">
+        <div class="two-col" style="align-items: center;">
+            <div class="reveal img-frame">
+                <img src="/images/23.jpg" alt="Linda Kikolashvili" style="max-width: 480px; height: auto;">
+            </div>
+            <div>
+                <div class="reveal">
+                    <div class="person-name" style="color: var(--text-light);">Linda Kikolashvili</div>
+                    <h2 class="section-heading">Who We Are</h2>
+                </div>
+                <div class="reveal reveal-delay-1" style="margin-top: 0.5rem;">
+                    <p style="color: rgba(245,242,237,0.5); font-size: 0.85rem; margin-bottom: 1rem;">Business Consultant · Marketing Strategist · Entrepreneur</p>
+                </div>
+                <div class="reveal reveal-delay-2">
+                    <p class="body-text" style="color: rgba(245,242,237,0.85); margin-bottom: 1.5rem;">Linda Kikolashvili is a Georgian <strong>top-level</strong> manager, business consultant, and marketing strategist with a <strong>strong</strong> multidisciplinary <strong>background</strong> in <strong>law and marketing</strong>.</p>
+                    <p style="color: rgba(245,242,237,0.65); font-size: 0.9rem; margin-bottom: 0.5rem;">Core Areas of Expertise:</p>
+                    <ul class="expertise-list">
+                        <li>Business Strategy &amp; Consulting</li>
+                        <li>Marketing &amp; Brand Development</li>
+                        <li>Public Speaking &amp; Educational Programs</li>
+                        <li>Leadership Development</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ LINDA DETAILS ═══ -->
+<section class="section">
+    <div class="section-inner">
+        <div class="two-col">
+            <div>
+                <div class="reveal">
+                    <p class="body-text" style="margin-bottom: 1.5rem;">Business Consultant &amp; Marketing Strategist Linda works with <strong>entrepreneurs, executives</strong>, and <strong>organizations</strong>, supporting them in business growth, brand positioning, strategic planning, and market entry. She has participated in consulting projects involving <strong>academic institutions</strong> and <strong>high-level professionals</strong>.</p>
+                </div>
+                <div class="reveal reveal-delay-1">
+                    <p class="body-text body-text-bold">Linda Kikolashvili has led the attraction and execution of investment projects exceeding USD 100 million in total value, implemented across Georgia and international markets. Her portfolio includes cross-border partnerships, strategic project development, and large-scale investment integration across multiple industries.</p>
+                </div>
+            </div>
+            <div class="reveal img-frame">
+                <img src="/images/2.jpg" alt="Linda on set" style="height: clamp(250px, 28vw, 400px);">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ LINDA CREATIVE ═══ -->
+<hr class="section-divider">
+<section class="section">
+    <div class="section-inner">
+        <div class="two-col">
+            <div>
+                <div class="reveal">
+                    <h2 style="font-family: var(--serif); font-style: italic; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 500; margin-bottom: 1.5rem;">Creative &amp; Media Experience:</h2>
+                </div>
+                <div class="reveal reveal-delay-1">
+                    <p class="body-text" style="margin-bottom: 2rem;">Linda has participated in Georgian films, television series, and commercial projects. Due to her <strong>distinctive appearance</strong> and <strong>strong</strong> screen presence, she has <strong>frequently</strong> been <strong>invited</strong> to television programs and media projects.</p>
+                </div>
+                <div class="reveal reveal-delay-2 img-frame">
+                    <img src="/images/25.jpg" alt="Linda TV interview" style="height: clamp(200px, 24vw, 320px);">
+                </div>
+            </div>
+            <div class="reveal">
+                <div class="img-frame" style="margin-bottom: 1rem;">
+                    <img src="/images/26.jpg" alt="Linda on Georgian TV" style="height: clamp(180px, 18vw, 240px);">
+                </div>
+                <div class="grid-2">
+                    <div class="img-frame"><img src="/images/27.jpg" alt="Linda podcast" style="height: clamp(180px, 20vw, 260px);"></div>
+                    <div class="img-frame"><img src="/images/10.jpg" alt="On location" style="height: clamp(180px, 20vw, 260px);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ GEORGIA ═══ -->
+<hr class="section-divider">
+<section class="section" id="georgia">
+    <div class="section-inner">
+        <div class="two-col">
+            <div>
+                <div class="reveal">
+                    <h2 class="section-heading">Filming in Georgia</h2>
+                    <p style="font-family: var(--serif); font-style: italic; font-size: clamp(1.5rem, 2.5vw, 2rem); color: var(--text-muted); margin-top: 0.25rem; margin-bottom: 2rem;">Location</p>
+                </div>
+                <div class="reveal reveal-delay-1 img-frame">
+                    <img src="/images/29.jpg" alt="Film crew in Georgian mountains" style="height: clamp(250px, 28vw, 400px);">
+                </div>
+            </div>
+            <div>
+                <div class="reveal">
+                    <p class="body-text" style="margin-bottom: 2rem;">Georgia is located on the crossroads of <strong>Europe</strong> and <strong>Asia</strong>, surrounded by the Black Sea from the west, the great Caucasus Mountains from the north and semi-desert areas from the south. Being located on the junction of <strong>ecologically and culturally diverse</strong> places, <strong>Georgia offers</strong> climate zones ranging from <strong>subtropical to high alpine</strong> and <strong>semi-desert</strong> areas.</p>
+                </div>
+                <div class="grid-2 reveal reveal-delay-1">
+                    <div class="img-frame"><img src="/images/30.jpg" alt="Georgian landscape road" style="height: clamp(150px, 18vw, 230px);"></div>
+                    <div class="img-frame"><img src="/images/31.jpg" alt="Georgian rocky mountains" style="height: clamp(150px, 18vw, 230px);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FILM FRIENDLY ═══ -->
+<hr class="section-divider">
+<section class="section">
+    <div class="section-inner">
+        <div class="two-col">
+            <div>
+                <div class="reveal">
+                    <h2 class="section-heading">Film Friendly Georgia</h2>
+                </div>
+                <div class="reveal reveal-delay-1" style="margin-top: 1.5rem;">
+                    <p class="body-text" style="margin-bottom: 2rem;">Georgia is home to a <strong>vibrant film industry</strong> which dates back to 1908. Since then, Georgian cinema has enjoyed great success and established its <strong>own unique identity</strong>.</p>
+                </div>
+                <div class="grid-2 reveal reveal-delay-2">
+                    <div class="img-frame"><img src="/images/32.jpg" alt="Classic Georgian cinema" style="height: clamp(180px, 20vw, 260px);"></div>
+                    <div class="img-frame"><img src="/images/3.jpg" alt="Georgian film production" style="height: clamp(180px, 20vw, 260px);"></div>
+                </div>
+            </div>
+            <div>
+                <div class="reveal img-frame" style="margin-bottom: 1.5rem;">
+                    <img src="/images/34.jpg" alt="Vintage Georgian filmmakers" style="height: clamp(180px, 20vw, 260px);">
+                </div>
+                <div class="reveal reveal-delay-1">
+                    <p class="body-text">Georgia's filmmaking flourished during the Soviet years, when the country had the capacity of producing up to 70 films a year; back then, one of the local film studios, the Georgian Film Studio was among the biggest in the Soviet Union. The "Iron Curtain" prevented international exposure of many masterpieces, however, <strong>several films</strong> still managed to <strong>travel the world</strong> and <strong>received worldwide recognition</strong> and <strong>awards</strong>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CASH REBATE ═══ -->
+<hr class="section-divider">
+<section class="section">
+    <div class="section-inner">
+        <div class="reveal" style="max-width: 740px;">
+            <h2 class="section-heading">Cash Rebate Program</h2>
+            <p class="body-text" style="margin-top: 1.5rem;">The <strong>Government of Georgia</strong> launched the <strong>"Film in Georgia" program</strong> in 2016. This film incentive program offers a <strong>20%</strong> rebate for qualified spend in Georgia and an additional <strong>5%</strong> rebate is available if the production promotes Georgia by meeting the program's so called <strong>"cultural test."</strong></p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ ELIGIBLE PROJECTS ═══ -->
+<hr class="section-divider">
+<section class="section">
+    <div class="section-inner">
+        <div class="two-col" style="align-items: center;">
+            <div>
+                <div class="reveal">
+                    <h2 class="section-heading" style="margin-bottom: 2rem;">Eligible projects:</h2>
+                </div>
+                <div class="reveal reveal-delay-1 eligible-block">
+                    <h4>A minimum of 500 000 GEL spent on</h4>
+                    <ul>
+                        <li>Feature film</li>
+                        <li>Series</li>
+                    </ul>
+                </div>
+                <div class="reveal reveal-delay-2 eligible-block">
+                    <h4>A minimum of 300 000 GEL spent on</h4>
+                    <ul>
+                        <li>Documentary</li>
+                        <li>Animation</li>
+                        <li>Commercial</li>
+                        <li>Reality show</li>
+                        <li>Music video</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="reveal img-frame">
+                <img src="/images/35.jpg" alt="Green screen studio camera" style="height: clamp(250px, 28vw, 400px);">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ NON-FINANCIAL INCENTIVES ═══ -->
+<section class="incentives-section">
+    <div class="watermark">Aurora</div>
+    <div class="section-inner">
+        <div class="reveal" style="margin-bottom: clamp(3rem, 6vw, 5rem);">
+            <h2 style="font-family: var(--serif); font-style: italic; font-size: clamp(2.2rem, 4.5vw, 4rem); font-weight: 500;">Non-Financial Incentives</h2>
+        </div>
+
+        <div class="reveal" style="margin-left: 45%;">
+            <div class="incentive-item">
+                <span class="incentive-num">01</span>
+                <p class="incentive-text">No shooting permits</p>
+            </div>
+        </div>
+        <div class="reveal" style="margin-left: 30%;">
+            <div class="incentive-item">
+                <span class="incentive-num">02</span>
+                <p class="incentive-text">Most of the state-owned properties like buildings, derelict factories, roads, parks etc. are free to shoot</p>
+            </div>
+        </div>
+        <div class="reveal" style="margin-left: 18%;">
+            <div class="incentive-item">
+                <span class="incentive-num">03</span>
+                <p class="incentive-text">State services are accessible with minimum cost and bureaucracy</p>
+            </div>
+        </div>
+        <div class="reveal">
+            <div class="incentive-item">
+                <span class="incentive-num">04</span>
+                <p class="incentive-text">Easy access to military equipment and services with minimum cost and bureaucracy</p>
+            </div>
+        </div>
+        <div class="reveal" style="margin-left: 30%;">
+            <div class="incentive-item">
+                <span class="incentive-num">05</span>
+                <p class="incentive-text">A small country (69,700 sqm) with well-developed road, railway and air infrastructure. Short distances from cities to mountains, the sea, forests, or desert locations</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="site-footer" id="footer">
+    <div class="footer-bg">
+        <img src="/images/36.jpg" alt="Studio">
+    </div>
+    <div class="footer-overlay"></div>
+    <div class="footer-content">
+        <div class="reveal">
+            <div class="footer-brand">
+                Aurora<br>Motion
+                <span>Production Company</span>
+            </div>
+        </div>
+        <div class="reveal reveal-delay-1 footer-contact">
+            <p><a href="tel:+995551113111">+ 995 551 11 31 11</a></p>
+            <p><a href="https://www.auroramotion.ge" target="_blank" rel="noopener">www.auroramotion.ge</a></p>
+            <p><a href="mailto:hi@auroramotion.ge">hi@auroramotion.ge</a></p>
+        </div>
+    </div>
+    <p class="footer-copy">© 2026 Aurora Motion. All rights reserved.</p>
+</footer>
+
+<script>
+    // ─── HEADER SHOW ON SCROLL ───
+    const header = document.getElementById('siteHeader');
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        if (y > 300) {
+            header.classList.add('visible');
+        } else {
+            header.classList.remove('visible');
+        }
+        lastScroll = y;
+    }, { passive: true });
+
+    // ─── INTERSECTION OBSERVER FOR REVEALS ───
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
