@@ -369,16 +369,16 @@ a { color: inherit; text-decoration: none; }
 
 /* ─── EXPERTISE LIST ─── */
 .expertise-list {
-    list-style: none; margin-top: 1rem;
+    margin-top: 1rem;
+    margin-left: 1rem;
 }
 .expertise-list li {
-    font-size: 0.95rem; line-height: 2;
-    padding-left: 1rem; position: relative;
-    color: rgba(245,242,237,0.75);
+   line-height: 2;
+     position: relative;
+
 }
 .expertise-list li::before {
-    content: '—'; position: absolute; left: 0;
-    color: var(--accent);
+
 }
 
 /* ─── STAGGER IMAGE GRID ─── */
