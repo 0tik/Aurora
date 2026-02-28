@@ -393,12 +393,15 @@ a { color: inherit; text-decoration: none; }
 
 /* ─── IMDB LINK ─── */
 .imdb-link {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    font-size: 0.85rem; color: var(--accent-dim);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    color: cornflowerblue;
     border-bottom: 1px solid transparent;
     transition: color 0.3s, border-color 0.3s;
+    text-decoration: underline;
 }
-.imdb-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* ─── ELIGIBLE LIST ─── */
 .eligible-block h4 {
@@ -449,3 +452,9 @@ a { color: inherit; text-decoration: none; }
     flex-direction: column;
     justify-content: flex-end;
 }
+
+.flex-it .img-frame img {
+    object-fit: contain;
+}
+
+
