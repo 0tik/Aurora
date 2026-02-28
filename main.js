@@ -22,3 +22,9 @@
 }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+
+    function menuOpen () {
+        document.querySelector('.mobile-nav').classList.add('open');
+        document.querySelector('#siteHeader').classList.remove('visible');
+    }

@@ -16,7 +16,7 @@
 <header class="site-header" id="siteHeader">
     <div class="header-inner">
         <a href="#hero" class="logo-text">
-            <img class="header_logo" src="./logo.svg" width="50px" alt="">
+            <img class="header_logo" src="./logo_black.svg" width="50px" alt="">
         </a>
         <nav class="nav-links">
             <a href="#about">About</a>
@@ -25,7 +25,7 @@
             <a href="#georgia">Georgia</a>
             <a href="#footer">Contact</a>
         </nav>
-        <button class="menu-toggle" onclick="document.querySelector('.mobile-nav').classList.add('open')" aria-label="Open menu">
+        <button class="menu-toggle" onclick="menuOpen()" aria-label="Open menu">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
         </button>
     </div>
@@ -38,8 +38,7 @@
     </button>
     <a href="#about" onclick="this.parentElement.classList.remove('open')">About</a>
     <a href="#equipment" onclick="this.parentElement.classList.remove('open')">Equipment</a>
-    <a href="#yan" onclick="this.parentElement.classList.remove('open')">Yan Fisher</a>
-    <a href="#linda" onclick="this.parentElement.classList.remove('open')">Linda Kikolashvili</a>
+    <a href="#yan" onclick="this.parentElement.classList.remove('open')">Who We Are</a>
     <a href="#georgia" onclick="this.parentElement.classList.remove('open')">Georgia</a>
     <a href="#footer" onclick="this.parentElement.classList.remove('open')">Contact</a>
 </div>
@@ -68,9 +67,9 @@
 
 <!-- ═══ IMAGE STRIP ═══ -->
 <div class="image-strip">
-    <div><img src="./images/2.jpg" alt="Film crew on set"></div>
+    <div class="hide-on-mobile"><img  src="./images/2.jpg" alt="Film crew on set"></div>
     <div><img src="./images/3.jpg" alt="Film clapperboard"></div>
-    <div><img src="./images/4.jpg" alt="Cameraman silhouette"></div>
+    <div class="hide-on-mobile"><img  src="./images/4.jpg" alt="Cameraman silhouette"></div>
 </div>
 
 <!-- ═══ ABOUT ═══ -->
@@ -124,7 +123,7 @@
 
 <!-- ═══ YAN FISHER ═══ -->
 <hr class="section-divider">
-<section class="section" id="yan">
+<section class="section section-warm" id="yan">
     <div class="section-inner">
         <div class="two-col" style="align-items: center;">
             <div class="reveal img-frame img-grayscale">
@@ -384,48 +383,70 @@
     </div>
 </section>
 
-<!-- ═══ NON-FINANCIAL INCENTIVES ═══ -->
-<section class="incentives-section">
-    <div class="watermark">Aurora</div>
-    <div class="section-inner">
-        <div class="reveal" style="margin-bottom: clamp(3rem, 6vw, 5rem);">
-            <h2 style="font-family: var(--serif); font-style: italic; font-size: clamp(2.2rem, 4.5vw, 4rem); font-weight: 500;">Non-Financial Incentives</h2>
-        </div>
+<hr class="section-divider">
+<!-- Non-Financial Incentives Section -->
+<!-- Non-Financial Incentives Section -->
+<section class="nfi-section" style="position:relative;padding:40px 40px;background-color:#fff;overflow:hidden;">
 
-        <div class="reveal" style="margin-left: 45%;">
-            <div class="incentive-item">
-                <span class="incentive-num">01</span>
-                <p class="incentive-text">No shooting permits</p>
+    <img src="logo_black.svg" style="position:absolute;top:50%;right:5%;transform:translateY(-50%);width:clamp(250px,40vw,500px);opacity:0.08;pointer-events:none; object-fit: contain" alt="">
+
+    <div style="max-width:1200px;margin:0 auto;">
+
+        <h2 class="reveal" style="font-size:clamp(32px,5vw,52px);font-style:italic;font-weight:300;color:#000;margin:0 0 50px 0;letter-spacing:-0.5px;">Non-Financial Incentives</h2>
+
+        <div style="display:flex;flex-direction:column;gap:32px;">
+
+            <!-- 01 -->
+            <div style="display:flex;align-items:flex-start;gap:16px;margin-left:auto;margin-right:20%;width:fit-content;">
+                <span class="reveal" style="font-size:clamp(48px,6vw,80px);font-weight:900;line-height:1;color:#000;">01</span>
+                <p class="reveal" style="font-size:clamp(14px,1.4vw,18px);font-weight:600;color:#000;margin:0;padding-top:16px;max-width:400px;">No shooting permits</p>
             </div>
-        </div>
-        <div class="reveal" style="margin-left: 30%;">
-            <div class="incentive-item">
-                <span class="incentive-num">02</span>
-                <p class="incentive-text">Most of the state-owned properties like buildings, derelict factories, roads, parks etc. are free to shoot</p>
+
+            <!-- 02 -->
+            <div style="display:flex;align-items:flex-start;gap:16px;margin-left:30%;width:fit-content;">
+                <span class="reveal" style="font-size:clamp(48px,6vw,80px);font-weight:900;line-height:1;color:#000;">02</span>
+                <p class="reveal" style="font-size:clamp(14px,1.4vw,18px);font-weight:600;color:#000;margin:0;padding-top:16px;max-width:460px;">Most of the state-owned properties like buildings, derelict factories, roads, parks etc. are free to shoot</p>
             </div>
-        </div>
-        <div class="reveal" style="margin-left: 18%;">
-            <div class="incentive-item">
-                <span class="incentive-num">03</span>
-                <p class="incentive-text">State services are accessible with minimum cost and bureaucracy</p>
+
+            <!-- 03 -->
+            <div style="display:flex;align-items:flex-start;gap:16px;margin-left:20%;width:fit-content;">
+                <span class="reveal" style="font-size:clamp(48px,6vw,80px);font-weight:900;line-height:1;color:#000;">03</span>
+                <p class="reveal" style="font-size:clamp(14px,1.4vw,18px);font-weight:600;color:#000;margin:0;padding-top:16px;max-width:420px;">State services are accessible with minimum cost and bureaucracy</p>
             </div>
-        </div>
-        <div class="reveal">
-            <div class="incentive-item">
-                <span class="incentive-num">04</span>
-                <p class="incentive-text">Easy access to military equipment and services with minimum cost and bureaucracy</p>
+
+            <!-- 04 -->
+            <div style="display:flex;align-items:flex-start;gap:16px;margin-left:0;width:fit-content;">
+                <span class="reveal" style="font-size:clamp(48px,6vw,80px);font-weight:900;line-height:1;color:#000;">04</span>
+                <p class="reveal" style="font-size:clamp(14px,1.4vw,18px);font-weight:600;color:#000;margin:0;padding-top:16px;max-width:460px;">Easy access to military equipment and services with minimum cost and bureaucracy</p>
             </div>
-        </div>
-        <div class="reveal" style="margin-left: 30%;">
-            <div class="incentive-item">
-                <span class="incentive-num">05</span>
-                <p class="incentive-text">A small country (69,700 sqm) with well-developed road, railway and air infrastructure. Short distances from cities to mountains, the sea, forests, or desert locations</p>
+
+            <!-- 05 -->
+            <div style="display:flex;align-items:flex-start;gap:16px;margin-left:35%;width:fit-content;">
+                <span class="reveal" style="font-size:clamp(48px,6vw,80px);font-weight:900;line-height:1;color:#000;">05</span>
+                <p class="reveal" style="font-size:clamp(14px,1.4vw,18px);font-weight:600;color:#000;margin:0;padding-top:16px;max-width:480px;">A small country (69,700 sqm) with well-developed road, railway and air infrastructure. Short distances from cities to mountains, the sea, forests, or desert locations</p>
             </div>
+
         </div>
     </div>
-</section>
 
-<!-- ═══ FOOTER ═══ -->
+    <style>
+        @media (max-width: 768px) {
+            .nfi-section {
+                padding: 64px 16px !important;
+            }
+            .nfi-section div[style*="margin-left"] {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                width: 100% !important;
+                align-items: center !important;
+            }
+
+            .nfi-section p {
+                padding-top: unset !important;
+            }
+        }
+    </style>
+</section><!-- ═══ FOOTER ═══ -->
 <footer class="site-footer" id="footer">
     <div class="footer-bg">
         <img src="./images/1.jpg" alt="Studio">
